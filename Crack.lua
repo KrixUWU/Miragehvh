@@ -4206,6 +4206,65 @@ function Lib:Create(title)
     W.Name, W.Size, W.Position, W.BackgroundColor3, W.BorderSizePixel = "M", UDim2.new(0, 620, 0, 450), UDim2.new(0.5, -310, 0.5, -225), T.Main, 0
     W.Parent = R.gui
     R.main = W
+    local UIS = game:GetService("UserInputService")
+
+local toggleBtn = Instance.new("Frame")
+toggleBtn.Name = "MenuToggleButton"
+toggleBtn.Size = UDim2.new(0, 18, 0, 90)
+toggleBtn.Position = UDim2.new(0, 0, 0.5, -45)
+toggleBtn.BackgroundColor3 = T.Accent
+toggleBtn.BorderSizePixel = 0
+toggleBtn.Parent = R.gui
+toggleBtn.Active = true
+toggleBtn.ZIndex = 9999
+
+local corner = Instance.new("UICorner", toggleBtn)
+corner.CornerRadius = UDim.new(0, 8)
+
+local icon = Instance.new("TextLabel")
+icon.Size = UDim2.new(1, 0, 1, 0)
+icon.BackgroundTransparency = 1
+icon.Text = "≡"
+icon.Font = T.Font
+icon.TextSize = 14
+icon.TextColor3 = Color3.new(0, 0, 0)
+icon.Parent = toggleBtn
+
+toggleBtn.InputBegan:Connect(function(i)
+	if i.UserInputType == Enum.UserInputType.MouseButton1 then
+		R.visible = not R.visible
+		R.main.Visible = R.visible
+	end
+end)
+
+local dragging = false
+local dragStart, startPos
+
+toggleBtn.InputBegan:Connect(function(i)
+	if i.UserInputType == Enum.UserInputType.MouseButton1 then
+		dragging = true
+		dragStart = i.Position
+		startPos = toggleBtn.Position
+	end
+end)
+
+UIS.InputChanged:Connect(function(i)
+	if dragging and i.UserInputType == Enum.UserInputType.MouseMovement then
+		local d = i.Position - dragStart
+		toggleBtn.Position = UDim2.new(
+			startPos.X.Scale,
+			startPos.X.Offset,
+			startPos.Y.Scale,
+			startPos.Y.Offset + d.Y
+		)
+	end
+end)
+
+UIS.InputEnded:Connect(function(i)
+	if i.UserInputType == Enum.UserInputType.MouseButton1 then
+		dragging = false
+	end
+end)
     Instance.new("UIStroke", W).Color = T.Border
     local wgl = Instance.new("Frame") wgl.Size, wgl.Position, wgl.BorderSizePixel = UDim2.new(1, 0, 0, 2), UDim2.new(0, 0, 0, 0), 0 wgl.Parent = W
     local wug = Instance.new("UIGradient")
